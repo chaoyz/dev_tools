@@ -5,6 +5,7 @@
 # 使用方法
 ## 安装
 sh install_docker_centos6.sh install
+
 国内用户可以设置阿里云docker加速地址
 sh install_docker_centos6.sh install 阿里云镜像加速地址
 
