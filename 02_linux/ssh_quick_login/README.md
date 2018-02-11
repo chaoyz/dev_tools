@@ -9,7 +9,9 @@
 # 使用方法
 ## 使用方法一
 命令行输入myssh，弹出对话框选择对应服务器即可：
+
 ![图片1](https://github.com/chaoyz/dev_tools/raw/master/images/02_linux_ssh_quick_login_2.png)
 ## 使用方法二
 当配置服务器较多的时候可以在命令行后面输入一个参数，脚本会根据参数匹配服务器信息，例如我这里输入"myssh 24"显示如下：
+
 ![图片1](https://github.com/chaoyz/dev_tools/raw/master/images/02_linux_ssh_quick_login_3.png)
