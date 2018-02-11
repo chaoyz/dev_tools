@@ -13,6 +13,7 @@ CONIFG=(
     "root@192.168.1.227=itnihao"
     "root@192.168.1.187=itnihao"
     "root@192.168.1.242=itnihao"
+    "-p 22 root@192.168.1.187=itnihao"
 )
 
 OS_VERSION=$(uname)
@@ -116,4 +117,15 @@ INDEX=$(cat /tmp/myssh.log)
 LOGIN_CMD="${IP_LIST[$INDEX]}"
 LOGIN_PSW=${PSW_LIST[$INDEX]}
 
-sshautologin.sh $LOGIN_CMD $LOGIN_PSW
+BLANK_COUNT=$(echo "$LOGIN_CMD" | grep " " | wc -l)
+if [ $BLANK_COUNT -gt 0 ];then
+    CMD=${LOGIN_CMD##*" "}
+    PARAM=${LOGIN_CMD%" "*}
+    echo "CMD:$CMD"
+    echo "PARAM:$PARAM"
+    sshautologin.sh "$CMD" "$LOGIN_PSW" "$PARAM"
+else
+    sshautologin.sh $LOGIN_CMD $LOGIN_PSW
+fi
+
+#sshautologin.sh $LOGIN_CMD $LOGIN_PSW
