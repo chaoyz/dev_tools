@@ -103,6 +103,12 @@ do
         TMP="$TMP $i ${IP_LIST[$i]}"
     fi
 done
+
+if [ -z "$TMP" ];then
+    echo "can not match param:$PARAM"
+    exit 1
+fi
+
 dialog --title "my ssh quick login" --menu "Please choose a login server ip:" 12 35 5 $TMP 2> /tmp/myssh.log
 RESULT=$?
 if [ $RESULT == 1 ];then
