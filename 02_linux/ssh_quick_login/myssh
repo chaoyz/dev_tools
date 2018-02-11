@@ -13,7 +13,6 @@ CONIFG=(
     "root@192.168.1.227=itnihao"
     "root@192.168.1.187=itnihao"
     "root@192.168.1.242=itnihao"
-    "root -p 10422 root@pan.cloudhua.com=sucunbisheng"
 )
 
 OS_VERSION=$(uname)
