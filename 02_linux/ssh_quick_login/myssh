@@ -3,15 +3,17 @@
 # author: yc
 # description: quick ssh login shell. need install dialog and expect
 
-if [ ! -f "./sshautologin.sh" ];then
+if [ ! -f "/usr/local/bin/sshautologin.sh" ];then
     echo "sshautologin.sh file not found."
 fi
 
 CONIFG=(
     "root@192.168.1.247=itnihao"
+    "root@192.168.1.155=sucunbisheng"
     "root@192.168.1.227=itnihao"
     "root@192.168.1.187=itnihao"
     "root@192.168.1.242=itnihao"
+    "root -p 10422 root@pan.cloudhua.com=sucunbisheng"
 )
 
 OS_VERSION=$(uname)
@@ -90,11 +92,16 @@ else
     quick_ssh_login
 fi
 
-echo "IP_LIST:${IP_LIST[@]}"
 TMP=""
 for i in "${!IP_LIST[@]}"; 
 do
-    TMP="$TMP $i ${IP_LIST[$i]}"
+    BLANK_COUNT=$(echo "${IP_LIST[$i]}" | grep " " | wc -l)
+    if [ $BLANK_COUNT -gt 0 ];then
+        IP=$(echo ${IP_LIST[$i]} | sed 's/[[:space:]]/_/g')
+        TMP="$TMP $i $IP"
+    else
+        TMP="$TMP $i ${IP_LIST[$i]}"
+    fi
 done
 dialog --title "my ssh quick login" --menu "Please choose a login server ip:" 12 35 5 $TMP 2> /tmp/myssh.log
 RESULT=$?
@@ -110,4 +117,4 @@ INDEX=$(cat /tmp/myssh.log)
 LOGIN_CMD="${IP_LIST[$INDEX]}"
 LOGIN_PSW=${PSW_LIST[$INDEX]}
 
-./sshautologin.sh $LOGIN_CMD $LOGIN_PSW
+sshautologin.sh $LOGIN_CMD $LOGIN_PSW
