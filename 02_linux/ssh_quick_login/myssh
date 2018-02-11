@@ -1,0 +1,113 @@
+#!/bin/bash
+
+# author: yc
+# description: quick ssh login shell. need install dialog and expect
+
+if [ ! -f "./sshautologin.sh" ];then
+    echo "sshautologin.sh file not found."
+fi
+
+CONIFG=(
+    "root@192.168.1.247=itnihao"
+    "root@192.168.1.227=itnihao"
+    "root@192.168.1.187=itnihao"
+    "root@192.168.1.242=itnihao"
+)
+
+OS_VERSION=$(uname)
+case $OS_VERSION in
+    "Darwin")
+    # mac check dialog
+    BREW_VERSION=$(brew -v | grep -iE ".*homebrew.*" | wc -l)
+    if [ $BREW_VERSION -lt 1 ];then
+        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    fi
+    DIALOG_VERSION=$(dialog --version | grep Version | wc -l)
+    if [ $DIALOG_VERSION -lt 1 ];then
+        brew install dialog
+    fi
+    EXCEPT_VERSION=$(expect -v | grep -iE ".*version.*" | wc -l)
+    if [ $EXCEPT_VERSION -lt 1 ];then
+        brew install expect
+    fi
+    ;;
+    "Linux")
+    # linux
+    REHL_VERSION=$(cat /proc/version | grep -iE ".*centos.*|.*redhat.*|.*fedora.*" | wc -l)
+    if [ "$REHL_VERSION" -gt 0 ];then
+        DIALOG_VERSION=$(dialog --version | grep Version | wc -l)
+        if [ $DIALOG_VERSION -lt 1 ];then
+            sudo yum install -y dialog
+        fi
+        EXCEPT_VERSION=$(expect -v | grep -iE ".*version.*" | wc -l)
+        if [ $EXCEPT_VERSION -lt 1 ];then
+            sudo yum install -y expect
+        fi
+    fi
+    UBUNTU_DEBAIN_VERSION=$(cat /proc/version | grep -iE ".*ubuntu.*|.*debain.*" | wc -l)
+    if [ "$UBUNTU_DEBAIN_VERSION" -gt 0 ];then
+        DIALOG_VERSION=$(dialog --version | grep Version | wc -l)
+        if [ $DIALOG_VERSION -lt 1 ];then
+            sudo apt-get install -y dialog
+        fi
+        EXCEPT_VERSION=$(expect -v | grep -iE ".*version.*" | wc -l)
+        if [ $EXCEPT_VERSION -lt 1 ];then
+            sudo apt-get install -y expect
+        fi
+    fi
+    ;;
+esac
+
+IP_LIST=()
+PSW_LIST=()
+function quick_ssh_login() {
+    for(( i=0;i<${#CONIFG[@]};i++ ))
+    do
+        IP=$(echo ${CONIFG[i]} | cut -d '=' -f 1)
+        IP_LIST[i]=$IP
+        PSW=$(echo ${CONIFG[i]} | cut -d '=' -f 2)
+        PSW_LIST[i]=$PSW
+    done
+}
+
+PARAM=$1
+function quick_ssh_login_with_param() {
+    for(( i=0;i<${#CONIFG[@]};i++ ))
+    do
+        COUNT=$(echo "${CONIFG[i]}" | grep -E "$PARAM" | wc -l)
+        if [ "$COUNT" -gt 0 ];then
+            IP=$(echo ${CONIFG[i]} | cut -d '=' -f 1)
+            IP_LIST[i]=$IP
+            PSW=$(echo ${CONIFG[i]} | cut -d '=' -f 2)
+            PSW_LIST[i]=$PSW
+        fi
+    done
+}
+
+if [ -n "$PARAM" ];then
+    quick_ssh_login_with_param
+else
+    quick_ssh_login
+fi
+
+echo "IP_LIST:${IP_LIST[@]}"
+TMP=""
+for i in "${!IP_LIST[@]}"; 
+do
+    TMP="$TMP $i ${IP_LIST[$i]}"
+done
+dialog --title "my ssh quick login" --menu "Please choose a login server ip:" 12 35 5 $TMP 2> /tmp/myssh.log
+RESULT=$?
+if [ $RESULT == 1 ];then
+    echo "cancel ssh quick login."
+    exit 1
+elif [ $RESULT == 255 ];then
+    echo "dialog commend error."
+    exit 1
+fi
+echo "RESULT:$RESULT"
+INDEX=$(cat /tmp/myssh.log)
+LOGIN_CMD="${IP_LIST[$INDEX]}"
+LOGIN_PSW=${PSW_LIST[$INDEX]}
+
+./sshautologin.sh $LOGIN_CMD $LOGIN_PSW
