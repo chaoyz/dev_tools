@@ -109,7 +109,7 @@ if [ -z "$TMP" ];then
     exit 1
 fi
 
-dialog --title "my ssh quick login" --menu "Please choose a login server ip:" 12 35 5 $TMP 2> /tmp/myssh.log
+dialog --title "my ssh quick login" --menu "Please choose a login server ip:" 15 35 10 $TMP 2> /tmp/myssh.log
 RESULT=$?
 if [ $RESULT == 1 ];then
     echo "cancel ssh quick login."
