@@ -2,8 +2,10 @@
 日常远程登录测试机输入账号密码很麻烦，写了这个脚本用来快速免密码登录测试机，在mac和centos下经过测试。这个脚本纯属日常娱乐所写，因为脚本中包含了ssh登录信息和密码不建议使用在生产环境~
 # 安装
 1. 保存文件到/usr/local/bin目录，并添加权限
- - curl https://github.com/chaoyz/dev_tools/tree/master/02_linux/ssh_quick_login/myssh > /usr/local/bin/myssh
- - curl https://github.com/chaoyz/dev_tools/tree/master/02_linux/ssh_quick_login/sshautologin.sh > /usr/local/bin/sshautologin.sh
+ - curl https://github.com/chaoyz/dev_tools/tree/master/02_linux/ssh_quick_login/myssh
+ - mv myssh /usr/local/bin/
+ - wget https://raw.githubusercontent.com/chaoyz/dev_tools/master/02_linux/ssh_quick_login/sshautologin.sh 
+ - mv sshautologin.sh  /usr/local/bin/
  - chmod +x /usr/local/bin/myssh
  - chmod +x /usr/local/bin/sshautologin.sh
 2. 修改测试机登录账号和密码，vim /usr/local/bin/myssh
