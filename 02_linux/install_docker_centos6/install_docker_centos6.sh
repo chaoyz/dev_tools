@@ -8,7 +8,7 @@ GREEN='\e[1;92m'
 WITE='\e[1;97m'
 NC='\e[0m'
 
-CENTOS_RELEASE="/etc/issue"
+CENTOS_RELEASE="/etc/redhat-release"
 # check os message
 function check() {
     if [ ! -f "$CENTOS_RELEASE" ]; then
